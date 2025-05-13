@@ -1,5 +1,6 @@
 import axios from "axios";
 import dotenv from "dotenv";
+import { getDate } from "./utils/utils.js";
 
 dotenv.config();
 
@@ -10,7 +11,8 @@ const HEADERS = {
 };
 
 export async function getFirstBatch() {
-  const url = `${BASE_URL}/scroll?_size=100&_fields=email,lista,lastInteractionIn&_where=lastInteractionIn>2020-01-01`;
+  const date = getDate();
+  const url = `${BASE_URL}/scroll?_size=100&_fields=email,lista,lastInteractionIn&_where=lastInteractionIn>${date}`;
   const response = await axios.get(url, { headers: HEADERS });
 
   return {
