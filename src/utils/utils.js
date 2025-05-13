@@ -1,6 +1,6 @@
 import { logger } from "../logger.js";
 
-const BACKOFF = 180000;
+const BACKOFF = 180000; // 3 minutes in ms
 
 export function getDate() {
   const now = new Date();
