@@ -3,6 +3,8 @@ import { upsertContacts } from "./hubspotClient.js";
 import { withRetry } from "./utils/utils.js";
 import { logger } from "./logger.js";
 
+console.log("✨ Starting process");
+
 const { token, data: firstBatch } = await withRetry(getFirstBatch, [], 5);
 
 let currentToken = token;
@@ -28,3 +30,5 @@ while (currentBatch.length > 0) {
     logger.error("Error requesting next contacts batch: ", error);
   }
 }
+
+console.log("✅ Process finished");
