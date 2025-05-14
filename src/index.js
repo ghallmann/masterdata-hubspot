@@ -2,7 +2,7 @@ import { getFirstBatch, getNextBatch } from "./vtexClient.js";
 import { upsertContacts } from "./hubspotClient.js";
 import { withRetry } from "./utils/utils.js";
 import { logger } from "./logger.js";
-import { sendEmail } from "./mailer.js";
+import { sendEmail, sendErrorEmail } from "./mailer.js";
 
 console.log("✨ Starting process");
 
@@ -21,6 +21,7 @@ while (currentBatch.length > 0) {
     }
   } catch (error) {
     logger.error("Error upserting contacts: ", error);
+    await sendErrorEmail(error);
   }
 
   try {
@@ -33,6 +34,7 @@ while (currentBatch.length > 0) {
     }
   } catch (error) {
     logger.error("Error requesting next contacts batch: ", error);
+    await sendErrorEmail(error);
   }
 }
 

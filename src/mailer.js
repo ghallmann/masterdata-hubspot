@@ -10,6 +10,7 @@ const PASS = process.env.EMAIL_PASS;
 const HOST = process.env.EMAIL_HOST;
 const PORT = process.env.EMAIL_PORT;
 const RECIPIENT = process.env.EMAIL_RECIPIENT;
+const ADMIN_RECIPIENT = process.env.EMAIL_ADMIN_RECIPIENT;
 
 const transporter = nodemailer.createTransport({
   host: HOST,
@@ -40,5 +41,19 @@ export async function sendEmail(syncedContacts) {
     logger.info("Email sent successfully");
   } catch (error) {
     logger.error("Error sending email: ", error);
+  }
+}
+
+export async function sendErrorEmail(err) {
+  try {
+    transporter.sendMail({
+      from: `SAC Madesa <${USER}>`,
+      to: ADMIN_RECIPIENT,
+      subject: "Erro na sincronização dos contatos na Hubspot",
+      text: `Erro: ${err}`,
+    });
+    logger.info("Error email sent successfully");
+  } catch (error) {
+    logger.error("Error sending error log email: ", error);
   }
 }
