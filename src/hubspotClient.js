@@ -20,5 +20,5 @@ export async function upsertContacts(batch) {
     })),
   };
   const response = await axios.post(BASE_URL, payload, { headers: HEADERS });
-  return response.status;
+  return response;
 }
