@@ -2,18 +2,23 @@ import { getFirstBatch, getNextBatch } from "./vtexClient.js";
 import { upsertContacts } from "./hubspotClient.js";
 import { withRetry } from "./utils/utils.js";
 import { logger } from "./logger.js";
+import { sendEmail } from "./mailer.js";
 
 console.log("✨ Starting process");
 
 const { token, data: firstBatch } = await withRetry(getFirstBatch, [], 5);
 
+let syncedContacts = [];
 let currentToken = token;
 let currentBatch = firstBatch;
 
 while (currentBatch.length > 0) {
   try {
     const response = await withRetry(upsertContacts, [currentBatch], 5);
-    if (response.status === 200) logger.info("Batch upserted successfully");
+    if (response.status === 200) {
+      syncedContacts.push(...currentBatch.map((c) => c.email));
+      logger.info("Batch upserted successfully");
+    }
   } catch (error) {
     logger.error("Error upserting contacts: ", error);
   }
@@ -30,5 +35,7 @@ while (currentBatch.length > 0) {
     logger.error("Error requesting next contacts batch: ", error);
   }
 }
+
+if (syncedContacts.length > 0) await sendEmail(syncedContacts);
 
 console.log("✅ Process finished");
