@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import { logger } from "./logger.js";
+import { generateSyncedContactsReport } from "./utils/utils.js";
 
 dotenv.config();
 
@@ -20,18 +21,24 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export async function sendEmail() {
+export async function sendEmail(syncedContacts) {
+  const date = new Date().toISOString().split("T")[0];
+  const filename = generateSyncedContactsReport(syncedContacts);
   try {
     transporter.sendMail({
       from: `SAC Madesa <${USER}>`,
       to: RECIPIENT,
       subject: "Relação de Contatos Criados/Atualizados na Hubspot",
       text: "Segue em anexo a relação de contatos criados/atualizados na Hubspot.",
+      attachments: [
+        {
+          filename: `contatos_sincronizados_${date}.txt`,
+          path: filename,
+        },
+      ],
     });
     logger.info("Email sent successfully");
   } catch (error) {
     logger.error("Error sending email: ", error);
   }
 }
-
-await sendEmail();
