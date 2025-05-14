@@ -1,4 +1,6 @@
 import { logger } from "../logger.js";
+import fs from "fs";
+import path from "path";
 
 const BACKOFF = 180000; // 3 minutes in ms
 
@@ -27,4 +29,17 @@ export async function withRetry(fn, args = [], retries = 5) {
     }
   }
   throw new Error("Failed after 5 retries");
+}
+
+export function generateSyncedContactsReport(contacts) {
+  const reportsDir = "./reports";
+  if (!fs.existsSync(reportsDir)) {
+    fs.mkdirSync(reportsDir);
+  }
+
+  const date = new Date().toISOString().split("T")[0];
+  const reportFilePath = path.join(reportsDir, `${date}.txt`);
+  const content = contacts.join("\n");
+  fs.writeFileSync(reportFilePath, content);
+  return reportFilePath;
 }
