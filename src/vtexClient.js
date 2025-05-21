@@ -1,9 +1,12 @@
 import axios from "axios";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 import { getDate } from "./utils/utils.js";
 import { logger } from "./logger.js";
 
-dotenv.config();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 const BASE_URL = process.env.VTEX_BASE_URL;
 const HEADERS = {

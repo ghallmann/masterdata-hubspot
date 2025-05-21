@@ -1,9 +1,12 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 import { logger } from "./logger.js";
 import { generateSyncedContactsReport } from "./utils/utils.js";
 
-dotenv.config();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 const USER = process.env.EMAIL_USER;
 const PASS = process.env.EMAIL_PASS;
